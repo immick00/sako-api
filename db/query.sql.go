@@ -7,7 +7,62 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
+
+const createOnboardingResponse = `-- name: CreateOnboardingResponse :one
+INSERT INTO onboarding_responses (
+    user_id, goal, weight, height_feet, height_inches, age_range, days_per_week, activity_level, cravings, dislikes 
+) VALUES (
+  $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+)
+RETURNING id, user_id, goal, weight, height_feet, height_inches, age_range, days_per_week, activity_level, cravings, dislikes, created_at
+`
+
+type CreateOnboardingResponseParams struct {
+	UserID        string      `json:"userId"`
+	Goal          pgtype.Text `json:"goal"`
+	Weight        int32       `json:"weight"`
+	HeightFeet    string      `json:"heightFeet"`
+	HeightInches  string      `json:"heightInches"`
+	AgeRange      pgtype.Text `json:"ageRange"`
+	DaysPerWeek   pgtype.Text `json:"daysPerWeek"`
+	ActivityLevel pgtype.Text `json:"activityLevel"`
+	Cravings      string      `json:"cravings"`
+	Dislikes      string      `json:"dislikes"`
+}
+
+func (q *Queries) CreateOnboardingResponse(ctx context.Context, arg CreateOnboardingResponseParams) (OnboardingResponse, error) {
+	row := q.db.QueryRow(ctx, createOnboardingResponse,
+		arg.UserID,
+		arg.Goal,
+		arg.Weight,
+		arg.HeightFeet,
+		arg.HeightInches,
+		arg.AgeRange,
+		arg.DaysPerWeek,
+		arg.ActivityLevel,
+		arg.Cravings,
+		arg.Dislikes,
+	)
+	var i OnboardingResponse
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Goal,
+		&i.Weight,
+		&i.HeightFeet,
+		&i.HeightInches,
+		&i.AgeRange,
+		&i.DaysPerWeek,
+		&i.ActivityLevel,
+		&i.Cravings,
+		&i.Dislikes,
+		&i.CreatedAt,
+	)
+	return i, err
+}
 
 const getMcdonaldsProduct = `-- name: GetMcdonaldsProduct :one
 SELECT id, name, image_url, calories, calories_unit, protein, protein_unit, carbs, carbs_unit, fat, fat_unit, category FROM mcdonalds

@@ -23,6 +23,21 @@ type Mcdonald struct {
 	Category     pgtype.Text `json:"category"`
 }
 
+type OnboardingResponse struct {
+	ID            int64              `json:"id"`
+	UserID        string             `json:"userId"`
+	Goal          pgtype.Text        `json:"goal"`
+	Weight        int32              `json:"weight"`
+	HeightFeet    string             `json:"heightFeet"`
+	HeightInches  string             `json:"heightInches"`
+	AgeRange      pgtype.Text        `json:"ageRange"`
+	DaysPerWeek   pgtype.Text        `json:"daysPerWeek"`
+	ActivityLevel pgtype.Text        `json:"activityLevel"`
+	Cravings      string             `json:"cravings"`
+	Dislikes      string             `json:"dislikes"`
+	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
+}
+
 type Subway struct {
 	ID           int32       `json:"id"`
 	Name         string      `json:"name"`

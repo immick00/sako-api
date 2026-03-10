@@ -97,6 +97,33 @@ func main() {
 		return c.JSON(http.StatusOK, menus)
 	})
 
+	e.POST("/onboarding", func(c echo.Context) error {
+		var body struct {
+			Goal          *string  `json:"goal"`
+			Weight        float64  `json:"weight"`
+			HeightFeet    string   `json:"heightFeet"`
+			HeightInches  string   `json:"heightInches"`
+			AgeRange      *string  `json:"ageRange"`
+			DaysPerWeek   *string  `json:"daysPerWeek"`
+			ActivityLevel *string  `json:"activityLevel"`
+			Cravings      []string `json:"cravings"`
+			Dislikes      []string `json:"dislikes"`
+		}
+		if err := c.Bind(&body); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		}
+		if body.Weight == 0 {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "weight is required"})
+		}
+		if body.HeightFeet == "" {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "heightFeet is required"})
+		}
+		if body.HeightInches == "" {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "heightInches is required"})
+		}
+		return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
+	})
+
 	logger.Log.Info("starting server", "port", 8080)
 	e.Logger.Fatal(e.Start(":8080"))
 }
