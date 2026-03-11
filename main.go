@@ -12,6 +12,7 @@ import (
 	"github.com/immick00/sako-api/menus"
 	"github.com/immick00/sako-api/places"
 	"github.com/immick00/sako-api/revenuecat"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
@@ -24,9 +25,16 @@ func main() {
 		logger.Log.Warn("no .env file found")
 	}
 
-	pool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+	config, err := pgxpool.ParseConfig(os.Getenv("DATABASE_URL"))
 	if err != nil {
-		logger.Log.Error("failed to connect to database", "error", err)
+		panic(err)
+	}
+
+	config.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
+
+	pool, err := pgxpool.NewWithConfig(context.Background(), config)
+	if err != nil {
+		panic(err)
 	}
 	defer pool.Close()
 
