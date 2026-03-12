@@ -134,7 +134,7 @@ func (s *PlacesService) searchText(query string, lat, lon float64, pageToken str
 }
 
 func (s *PlacesService) getImageUrl(name string) (*PhotoMedia, error) {
-	url := fmt.Sprintf("https://places.googleapis.com/v1/%s?key=%s&max_height_px=3000&skipHttpRedirect=true", name, s.apiKey)
+	url := fmt.Sprintf("https://places.googleapis.com/v1/%s/media?key=%s&max_height_px=3000&skipHttpRedirect=true", name, s.apiKey)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -152,7 +152,6 @@ func (s *PlacesService) getImageUrl(name string) (*PhotoMedia, error) {
 		return nil, err
 	}
 	return &result, nil
-
 }
 
 func (s *PlacesService) GetRestaurantsAround(lat, lon float64) ([]Place, error) {
