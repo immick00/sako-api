@@ -174,20 +174,22 @@ func (s *PlacesService) GetRestaurantsAround(lat, lon float64) ([]Place, error) 
 			}
 
 			if len(result.Places) == 0 {
+				logger.Log.Warn("No place found for searchText")
 				return
 			}
 
-			for i := range result.Places {
-				if len(result.Places[i].Photos) == 0 {
-					continue
-				}
-				photo, err := s.getImageUrl(result.Places[i].Photos[0].Name)
-				if err != nil {
-					logger.Log.Error(err.Error())
-					continue
-				}
-				result.Places[i].Image = photo.PhotoURI
+			if len(result.Places[0].Photos) == 0 {
+				logger.Log.Warn("No photos found for place")
+				return
 			}
+
+			photo, err := s.getImageUrl(result.Places[0].Photos[0].Name)
+			if err != nil {
+				logger.Log.Error(err.Error())
+				return
+			}
+
+			result.Places[0].Image = photo.PhotoURI
 
 			mu.Lock()
 			allPlaces = append(allPlaces, result.Places...)
@@ -203,7 +205,6 @@ func (s *PlacesService) GetRestaurantsAround(lat, lon float64) ([]Place, error) 
 		if _, ok := seen[p.ID]; !ok && haversine(lat, lon, p.Location.Latitude, p.Location.Longitude) <= RADIUS {
 			seen[p.ID] = struct{}{}
 			p.DisplayName.Text = normalizeRestaurantName(p.DisplayName.Text)
-			// p.Image = s.distributionUrl + "/images/logos/" + p.DisplayName.Text + ".png"
 			unique = append(unique, p)
 		}
 	}
