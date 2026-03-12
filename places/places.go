@@ -43,6 +43,26 @@ type DisplayName struct {
 	Text string `json:"text"`
 }
 
+type AuthorAttribution struct {
+	DisplayName string `json:"displayName"`
+	URI         string `json:"uri"`
+	PhotoURI    string `json:"photoUri"`
+}
+
+type Photo struct {
+	Name               string              `json:"name"`
+	WidthPx            int                 `json:"widthPx"`
+	HeightPx           int                 `json:"heightPx"`
+	AuthorAttributions []AuthorAttribution `json:"authorAttributions"`
+	FlagContentURI     string              `json:"flagContentUri"`
+	GoogleMapsURI      string              `json:"googleMapsUri"`
+}
+
+type PhotoMedia struct {
+	Name     string `json:"name"`
+	PhotoURI string `json:"photoUri"`
+}
+
 type Place struct {
 	ID               string      `json:"id"`
 	DisplayName      DisplayName `json:"displayName"`
@@ -50,6 +70,7 @@ type Place struct {
 	FormattedAddress string      `json:"formattedAddress"`
 	Location         Location    `json:"location"`
 	Rating           float64     `json:"rating"`
+	Photos           []Photo     `json:"photos"`
 }
 
 type PlacesResponse struct {
@@ -97,7 +118,7 @@ func (s *PlacesService) searchText(query string, lat, lon float64, pageToken str
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Goog-Api-Key", s.apiKey)
-	req.Header.Set("X-Goog-FieldMask", "nextPageToken,places.id,places.displayName,places.formattedAddress,places.location,places.rating")
+	req.Header.Set("X-Goog-FieldMask", "nextPageToken,places.id,places.displayName,places.formattedAddress,places.location,places.rating,places.photos")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -112,10 +133,30 @@ func (s *PlacesService) searchText(query string, lat, lon float64, pageToken str
 	return &result, nil
 }
 
+func (s *PlacesService) getImageUrl(name string) (*PhotoMedia, error) {
+	url := fmt.Sprintf("https://places.googleapis.com/v1/%s?key=%s&max_height_px=3000&skipHttpRedirect=true", name, s.apiKey)
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result PhotoMedia
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+
+}
+
 func (s *PlacesService) GetRestaurantsAround(lat, lon float64) ([]Place, error) {
-	// restaurants := []string{"mcdonalds"}
 	restaurants := []string{"McDonald's", "Subway"}
-	// restaurants := []string{"In-N-Out Burger"}
 
 	var (
 		mu        sync.Mutex
@@ -132,6 +173,23 @@ func (s *PlacesService) GetRestaurantsAround(lat, lon float64) ([]Place, error) 
 				logger.Log.Error(err.Error())
 				return
 			}
+
+			if len(result.Places) == 0 {
+				return
+			}
+
+			for i := range result.Places {
+				if len(result.Places[i].Photos) == 0 {
+					continue
+				}
+				photo, err := s.getImageUrl(result.Places[i].Photos[0].Name)
+				if err != nil {
+					logger.Log.Error(err.Error())
+					continue
+				}
+				result.Places[i].Image = photo.PhotoURI
+			}
+
 			mu.Lock()
 			allPlaces = append(allPlaces, result.Places...)
 			mu.Unlock()
@@ -146,7 +204,7 @@ func (s *PlacesService) GetRestaurantsAround(lat, lon float64) ([]Place, error) 
 		if _, ok := seen[p.ID]; !ok && haversine(lat, lon, p.Location.Latitude, p.Location.Longitude) <= RADIUS {
 			seen[p.ID] = struct{}{}
 			p.DisplayName.Text = normalizeRestaurantName(p.DisplayName.Text)
-			p.Image = s.distributionUrl + "/images/logos/" + p.DisplayName.Text + ".png"
+			// p.Image = s.distributionUrl + "/images/logos/" + p.DisplayName.Text + ".png"
 			unique = append(unique, p)
 		}
 	}
