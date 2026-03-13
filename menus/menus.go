@@ -10,7 +10,7 @@ import (
 type Menus struct {
 	Mcdonalds []db.Mcdonald  `json:"mcdonalds,omitempty"`
 	Subway    []db.Subway    `json:"subway,omitempty"`
-	ChickFilA []db.Chickfila `json:"chickfila,omitempty"`
+	ChickFilA []db.Chickfila `json:"chick-fil-a,omitempty"`
 }
 
 type MenuService struct {
