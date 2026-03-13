@@ -64,6 +64,43 @@ func (q *Queries) CreateOnboardingResponse(ctx context.Context, arg CreateOnboar
 	return i, err
 }
 
+const getChickFilAProducts = `-- name: GetChickFilAProducts :many
+SELECT id, name, image_url, calories, calories_unit, protein, protein_unit, carbs, carbs_unit, fat, fat_unit, category FROM chickfila
+`
+
+func (q *Queries) GetChickFilAProducts(ctx context.Context) ([]Chickfila, error) {
+	rows, err := q.db.Query(ctx, getChickFilAProducts)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Chickfila
+	for rows.Next() {
+		var i Chickfila
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.ImageUrl,
+			&i.Calories,
+			&i.CaloriesUnit,
+			&i.Protein,
+			&i.ProteinUnit,
+			&i.Carbs,
+			&i.CarbsUnit,
+			&i.Fat,
+			&i.FatUnit,
+			&i.Category,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getMcdonaldsProduct = `-- name: GetMcdonaldsProduct :one
 SELECT id, name, image_url, calories, calories_unit, protein, protein_unit, carbs, carbs_unit, fat, fat_unit, category FROM mcdonalds
 WHERE id = $1 LIMIT 1

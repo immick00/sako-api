@@ -155,7 +155,7 @@ func (s *PlacesService) getImageUrl(name string) (*PhotoMedia, error) {
 }
 
 func (s *PlacesService) GetRestaurantsAround(lat, lon float64) ([]Place, error) {
-	restaurants := []string{"McDonald's", "Subway"}
+	restaurants := []string{"McDonald's", "Subway", "Chick-fil-A"}
 
 	var (
 		mu        sync.Mutex

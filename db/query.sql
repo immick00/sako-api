@@ -8,6 +8,9 @@ SELECT * FROM mcdonalds;
 -- name: GetSubwayProducts :many
 SELECT * FROM subway;
 
+-- name: GetChickFilAProducts :many
+SELECT * FROM chickfila;
+
 -- name: CreateOnboardingResponse :one
 INSERT INTO onboarding_responses (
     user_id, goal, weight, height_feet, height_inches, age_range, days_per_week, activity_level, cravings, dislikes 

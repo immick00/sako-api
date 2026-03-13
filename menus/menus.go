@@ -8,8 +8,9 @@ import (
 )
 
 type Menus struct {
-	Mcdonalds []db.Mcdonald `json:"mcdonalds,omitempty"`
-	Subway    []db.Subway   `json:"subway,omitempty"`
+	Mcdonalds []db.Mcdonald  `json:"mcdonalds,omitempty"`
+	Subway    []db.Subway    `json:"subway,omitempty"`
+	ChickFilA []db.Chickfila `json:"chickfila,omitempty"`
 }
 
 type MenuService struct {
@@ -35,6 +36,11 @@ func (s *MenuService) GetMenus(ctx context.Context, restaurants []string) (Menus
 			result, err := s.queries.GetSubwayProducts(ctx)
 			if err == nil {
 				menus.Subway = result
+			}
+		case "chickfila":
+			result, err := s.queries.GetChickFilAProducts(ctx)
+			if err == nil {
+				menus.ChickFilA = result
 			}
 		}
 	}
