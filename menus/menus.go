@@ -37,7 +37,7 @@ func (s *MenuService) GetMenus(ctx context.Context, restaurants []string) (Menus
 			if err == nil {
 				menus.Subway = result
 			}
-		case "chickfila":
+		case "chick-fil-a":
 			result, err := s.queries.GetChickFilAProducts(ctx)
 			if err == nil {
 				menus.ChickFilA = result
