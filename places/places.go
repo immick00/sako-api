@@ -15,7 +15,7 @@ import (
 )
 
 const BASE_URL = "https://places.googleapis.com"
-const RADIUS = 5000 // In meters
+const RADIUS = 20000 // In meters
 
 // NOTE: need to redo this
 var restaurantAliases = map[string]string{
