@@ -200,6 +200,43 @@ func (q *Queries) GetMcdonaldsProducts(ctx context.Context) ([]Mcdonald, error) 
 	return items, nil
 }
 
+const getPopeyesProducts = `-- name: GetPopeyesProducts :many
+SELECT id, name, image_url, calories, calories_unit, protein, protein_unit, carbs, carbs_unit, fat, fat_unit, category FROM popeyes
+`
+
+func (q *Queries) GetPopeyesProducts(ctx context.Context) ([]Popeye, error) {
+	rows, err := q.db.Query(ctx, getPopeyesProducts)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Popeye
+	for rows.Next() {
+		var i Popeye
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.ImageUrl,
+			&i.Calories,
+			&i.CaloriesUnit,
+			&i.Protein,
+			&i.ProteinUnit,
+			&i.Carbs,
+			&i.CarbsUnit,
+			&i.Fat,
+			&i.FatUnit,
+			&i.Category,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getSubwayProducts = `-- name: GetSubwayProducts :many
 SELECT id, name, image_url, calories, calories_unit, protein, protein_unit, carbs, carbs_unit, fat, fat_unit, category FROM subway
 `
@@ -213,6 +250,43 @@ func (q *Queries) GetSubwayProducts(ctx context.Context) ([]Subway, error) {
 	var items []Subway
 	for rows.Next() {
 		var i Subway
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.ImageUrl,
+			&i.Calories,
+			&i.CaloriesUnit,
+			&i.Protein,
+			&i.ProteinUnit,
+			&i.Carbs,
+			&i.CarbsUnit,
+			&i.Fat,
+			&i.FatUnit,
+			&i.Category,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getTacoBellProducts = `-- name: GetTacoBellProducts :many
+SELECT id, name, image_url, calories, calories_unit, protein, protein_unit, carbs, carbs_unit, fat, fat_unit, category FROM tacobell
+`
+
+func (q *Queries) GetTacoBellProducts(ctx context.Context) ([]Tacobell, error) {
+	rows, err := q.db.Query(ctx, getTacoBellProducts)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Tacobell
+	for rows.Next() {
+		var i Tacobell
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
