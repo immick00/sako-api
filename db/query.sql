@@ -11,6 +11,9 @@ SELECT * FROM subway;
 -- name: GetChickFilAProducts :many
 SELECT * FROM chickfila;
 
+-- name: GetBurgerKingProducts :many
+SELECT * FROM burgerking;
+
 -- name: CreateOnboardingResponse :one
 INSERT INTO onboarding_responses (
     user_id, goal, weight, height_feet, height_inches, age_range, days_per_week, activity_level, cravings, dislikes 
