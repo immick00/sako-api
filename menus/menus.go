@@ -89,6 +89,7 @@ func (s *MenuService) GetMenus(ctx context.Context, restaurants []string) (Menus
 	for _, restaurant := range restaurants {
 		normalized := strings.ReplaceAll(strings.ToLower(restaurant), " ", "")
 		normalized = strings.ReplaceAll(normalized, "-", "")
+		normalized = strings.ReplaceAll(normalized, "'", "")
 		for _, e := range entries {
 			if strings.Contains(normalized, e.keyword) || strings.Contains(e.keyword, normalized) {
 				e.fetch()
