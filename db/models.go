@@ -112,3 +112,18 @@ type Tacobell struct {
 	FatUnit      pgtype.Text `json:"fatUnit"`
 	Category     pgtype.Text `json:"category"`
 }
+
+type Wendy struct {
+	ID           int32       `json:"id"`
+	Name         string      `json:"name"`
+	ImageUrl     pgtype.Text `json:"imageUrl"`
+	Calories     pgtype.Text `json:"calories"`
+	CaloriesUnit pgtype.Text `json:"caloriesUnit"`
+	Protein      pgtype.Text `json:"protein"`
+	ProteinUnit  pgtype.Text `json:"proteinUnit"`
+	Carbs        pgtype.Text `json:"carbs"`
+	CarbsUnit    pgtype.Text `json:"carbsUnit"`
+	Fat          pgtype.Text `json:"fat"`
+	FatUnit      pgtype.Text `json:"fatUnit"`
+	Category     pgtype.Text `json:"category"`
+}

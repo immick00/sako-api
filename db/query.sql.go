@@ -310,3 +310,40 @@ func (q *Queries) GetTacoBellProducts(ctx context.Context) ([]Tacobell, error) {
 	}
 	return items, nil
 }
+
+const getWentdysProducts = `-- name: GetWentdysProducts :many
+SELECT id, name, image_url, calories, calories_unit, protein, protein_unit, carbs, carbs_unit, fat, fat_unit, category FROM wendys
+`
+
+func (q *Queries) GetWentdysProducts(ctx context.Context) ([]Wendy, error) {
+	rows, err := q.db.Query(ctx, getWentdysProducts)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Wendy
+	for rows.Next() {
+		var i Wendy
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.ImageUrl,
+			&i.Calories,
+			&i.CaloriesUnit,
+			&i.Protein,
+			&i.ProteinUnit,
+			&i.Carbs,
+			&i.CarbsUnit,
+			&i.Fat,
+			&i.FatUnit,
+			&i.Category,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

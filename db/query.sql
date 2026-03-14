@@ -20,6 +20,9 @@ SELECT * FROM tacobell;
 -- name: GetPopeyesProducts :many
 SELECT * FROM popeyes;
 
+-- name: GetWentdysProducts :many
+SELECT * FROM wendys;
+
 -- name: CreateOnboardingResponse :one
 INSERT INTO onboarding_responses (
     user_id, goal, weight, height_feet, height_inches, age_range, days_per_week, activity_level, cravings, dislikes 

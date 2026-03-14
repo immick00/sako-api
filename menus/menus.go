@@ -14,6 +14,7 @@ type Menus struct {
 	BurgerKing []db.Burgerking `json:"burgerking,omitempty"`
 	TacoBell   []db.Tacobell   `json:"tacobell,omitempty"`
 	Popeyes    []db.Popeye     `json:"popeyes,omitempty"`
+	Wendys     []db.Wendy      `json:"wendys,omitempty"`
 }
 
 type MenuService struct {
@@ -73,6 +74,13 @@ func (s *MenuService) GetMenus(ctx context.Context, restaurants []string) (Menus
 			result, err := s.queries.GetPopeyesProducts(ctx)
 			if err == nil {
 				menus.Popeyes = result
+			}
+			return err
+		}},
+		{"wendys", func() error {
+			result, err := s.queries.GetWentdysProducts(ctx)
+			if err == nil {
+				menus.Wendys = result
 			}
 			return err
 		}},
