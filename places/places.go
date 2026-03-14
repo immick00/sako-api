@@ -154,9 +154,7 @@ func (s *PlacesService) getImageUrl(name string) (*PhotoMedia, error) {
 	return &result, nil
 }
 
-func (s *PlacesService) GetRestaurantsAround(lat, lon float64) ([]Place, error) {
-	restaurants := []string{"McDonald's", "Subway", "Chick-fil-A", "Taco Bell", "Popeyes", "Wendy's"}
-
+func (s *PlacesService) GetRestaurantsAround(lat, lon float64, restaurants []string) ([]Place, error) {
 	var (
 		mu        sync.Mutex
 		wg        sync.WaitGroup

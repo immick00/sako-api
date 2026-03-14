@@ -66,6 +66,31 @@ func main() {
 		return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
 	})
 
+	e.GET("/preview", func(c echo.Context) error {
+		latStr := c.QueryParam("lat")
+		lonStr := c.QueryParam("lon")
+
+		if latStr == "" || lonStr == "" {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "lat and lon are required"})
+		}
+
+		lat, err := strconv.ParseFloat(latStr, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid lat"})
+		}
+		lon, err := strconv.ParseFloat(lonStr, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid lon"})
+		}
+
+		result, err := placesService.GetRestaurantsAround(lat, lon, []string{"McDonald's", "Subway"})
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		}
+
+		return c.JSON(http.StatusOK, result)
+	})
+
 	requireSubscription := func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			userID := c.Request().Header.Get("x-user-id")
@@ -100,7 +125,8 @@ func main() {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid lon"})
 		}
 
-		result, err := placesService.GetRestaurantsAround(lat, lon)
+		restaurants := []string{"McDonald's", "Subway", "Chick-fil-A", "Taco Bell", "Popeyes", "Wendy's"}
+		result, err := placesService.GetRestaurantsAround(lat, lon, restaurants)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
